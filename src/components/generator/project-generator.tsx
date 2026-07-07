@@ -19,7 +19,8 @@ import {
   isRandomize,
   type QuestSelections,
 } from "@/lib/generator/data";
-import { createProject } from "@/lib/actions/projects";
+import { createProject, createProjectForm, ProjectActionState } from "@/lib/actions/projects";
+import { useActionState } from "react";
 import type { GeneratedProject } from "@/types";
 import { Button } from "@/components/ui/button";
 import { CardSpotlight } from "@/components/ui/card-spotlight";
@@ -56,6 +57,10 @@ export function ProjectGenerator() {
   const [project, setProject] = useState<GeneratedProject | null>(null);
   const [accepted, setAccepted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [actionState, formAction, actionPending] = useActionState(
+    createProjectForm,
+    {} as ProjectActionState
+  );
 
   const timeEstimates = useMemo(() => {
     const title = project?.project_title ?? "";
@@ -150,11 +155,22 @@ export function ProjectGenerator() {
     }
 
     startTransition(async () => {
-      const result = await createProject(payload);
-      if (result.error) {
         setError(result.error);
+      const fd = new FormData();
+      fd.set("career", payload.career);
+      fd.set("language", payload.language);
+      fd.set("framework", payload.framework);
+      fd.set("project_title", payload.project_title);
+      fd.set("time_estimate", payload.time_estimate);
+      fd.set("ai_assisted", payload.ai_assisted ? "true" : "false");
+
+      await formAction(fd);
+
+      if (actionState.error) {
+        setError(actionState.error);
         return;
       }
+
       setAccepted(true);
       setTimeout(() => router.push("/dashboard/board"), 1500);
     });
