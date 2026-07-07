@@ -68,6 +68,27 @@ export async function createProject(
   return { success: true };
 }
 
+// Form-compatible server action wrapper for client `useActionState` usage.
+export async function createProjectForm(
+  _prevState: ProjectActionState,
+  formData: FormData
+): Promise<ProjectActionState> {
+  try {
+    const project: GeneratedProject = {
+      career: String(formData.get("career") ?? ""),
+      language: String(formData.get("language") ?? ""),
+      framework: String(formData.get("framework") ?? ""),
+      project_title: String(formData.get("project_title") ?? ""),
+      time_estimate: String(formData.get("time_estimate") ?? ""),
+      ai_assisted: (formData.get("ai_assisted") ?? "false") === "true",
+    } as GeneratedProject;
+
+    return await createProject(project);
+  } catch (err: any) {
+    return { error: err?.message ?? "Unknown error" };
+  }
+}
+
 export async function updateProjectStatus(
   id: string,
   status: ProjectStatus,
