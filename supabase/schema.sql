@@ -21,10 +21,10 @@ CREATE TABLE IF NOT EXISTS public.user_projects (
   career TEXT NOT NULL,
   language TEXT NOT NULL,
   framework TEXT NOT NULL,
+  project_name TEXT NOT NULL DEFAULT '',
   project_title TEXT NOT NULL,
   time_estimate TEXT NOT NULL,
-  status TEXT NOT NULL DEFAULT 'pending'
-    CHECK (status IN ('pending', 'in_progress', 'completed')),
+  status TEXT NOT NULL DEFAULT 'pending',
   github_url TEXT,
   live_url TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -40,6 +40,7 @@ ALTER TABLE public.user_projects
   ADD COLUMN IF NOT EXISTS career TEXT NOT NULL DEFAULT '',
   ADD COLUMN IF NOT EXISTS language TEXT NOT NULL DEFAULT '',
   ADD COLUMN IF NOT EXISTS framework TEXT NOT NULL DEFAULT '',
+  ADD COLUMN IF NOT EXISTS project_name TEXT NOT NULL DEFAULT '',
   ADD COLUMN IF NOT EXISTS project_title TEXT NOT NULL DEFAULT '',
   ADD COLUMN IF NOT EXISTS time_estimate TEXT NOT NULL DEFAULT '',
   ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'pending',
@@ -47,6 +48,13 @@ ALTER TABLE public.user_projects
   ADD COLUMN IF NOT EXISTS live_url TEXT,
   ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+
+ALTER TABLE public.user_projects
+  DROP CONSTRAINT IF EXISTS user_projects_status_check;
+
+ALTER TABLE public.user_projects
+  ADD CONSTRAINT user_projects_status_check
+  CHECK (status IN ('pending', 'in_progress', 'completed'));
 
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_user_projects_user_id ON public.user_projects(user_id);

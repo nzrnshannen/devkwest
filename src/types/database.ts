@@ -40,6 +40,7 @@ export type Database = {
           career: string;
           language: string;
           framework: string;
+          project_name: string;
           project_title: string;
           time_estimate: string;
           status: "pending" | "in_progress" | "completed";
@@ -54,6 +55,7 @@ export type Database = {
           career: string;
           language: string;
           framework: string;
+          project_name?: string;
           project_title: string;
           time_estimate: string;
           status?: "pending" | "in_progress" | "completed";
@@ -68,6 +70,7 @@ export type Database = {
           career?: string;
           language?: string;
           framework?: string;
+          project_name?: string;
           project_title?: string;
           time_estimate?: string;
           status?: "pending" | "in_progress" | "completed";

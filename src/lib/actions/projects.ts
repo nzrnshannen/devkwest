@@ -47,18 +47,21 @@ export async function createProject(
   const insertData: UserProjectInsert = {
     user_id: user.id,
     ...parsed.data,
+    project_name: parsed.data.project_title,
     status: "pending",
   };
 
   const { error } = await supabase.from("user_projects").insert(insertData);
 
   if (error) {
+    console.error("Failed to create project:", error);
+
     if (error.message.includes("schema cache") || error.message.includes("column")) {
       return {
-        error:
-          "Database schema is out of date. Run supabase/migrations/001_fix_user_projects_columns.sql in your Supabase SQL Editor, then try again.",
+        error: `Database schema mismatch: ${error.message}`,
       };
     }
+
     return { error: error.message };
   }
 
