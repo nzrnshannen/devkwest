@@ -178,6 +178,12 @@ export function RegisterForm() {
               </p>
             )}
 
+            {state.success && (
+              <p className="rounded-lg bg-emerald-500/10 px-4 py-2 text-sm text-emerald-400">
+                {state.success}
+              </p>
+            )}
+
             <Button type="submit" className="w-full" size="lg" isLoading={pending}>
               Create Account
             </Button>

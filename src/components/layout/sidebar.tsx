@@ -8,6 +8,7 @@ import {
   Dices,
   Kanban,
   LogOut,
+  Settings2,
   Sparkles,
   Menu,
   X,
@@ -20,6 +21,7 @@ const navItems = [
   { label: "Analytics", href: "/dashboard", icon: BarChart3 },
   { label: "Generate Project", href: "/dashboard/generate", icon: Dices },
   { label: "Board", href: "/dashboard/board", icon: Kanban },
+  { label: "Settings", href: "/dashboard/settings", icon: Settings2 },
 ];
 
 interface SidebarProps {

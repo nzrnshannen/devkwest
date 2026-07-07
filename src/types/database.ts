@@ -13,16 +13,22 @@ export type Database = {
         Row: {
           id: string;
           email: string;
+          first_name: string;
+          last_name: string;
           created_at: string;
         };
         Insert: {
           id: string;
           email: string;
+          first_name?: string;
+          last_name?: string;
           created_at?: string;
         };
         Update: {
           id?: string;
           email?: string;
+          first_name?: string;
+          last_name?: string;
           created_at?: string;
         };
         Relationships: [];
@@ -79,6 +85,27 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      feedback: {
+        Row: {
+          id: string;
+          email: string | null;
+          message: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          email?: string | null;
+          message: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          email?: string | null;
+          message?: string;
+          created_at?: string;
+        };
+        Relationships: [];
       };
     };
     Views: {

@@ -9,6 +9,8 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS public.users (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   email TEXT NOT NULL UNIQUE,
+  first_name TEXT NOT NULL DEFAULT '',
+  last_name TEXT NOT NULL DEFAULT '',
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -28,6 +30,23 @@ CREATE TABLE IF NOT EXISTS public.user_projects (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- Backfill missing columns for existing databases
+ALTER TABLE public.users
+  ADD COLUMN IF NOT EXISTS first_name TEXT NOT NULL DEFAULT '',
+  ADD COLUMN IF NOT EXISTS last_name TEXT NOT NULL DEFAULT '';
+
+ALTER TABLE public.user_projects
+  ADD COLUMN IF NOT EXISTS career TEXT NOT NULL DEFAULT '',
+  ADD COLUMN IF NOT EXISTS language TEXT NOT NULL DEFAULT '',
+  ADD COLUMN IF NOT EXISTS framework TEXT NOT NULL DEFAULT '',
+  ADD COLUMN IF NOT EXISTS project_title TEXT NOT NULL DEFAULT '',
+  ADD COLUMN IF NOT EXISTS time_estimate TEXT NOT NULL DEFAULT '',
+  ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'pending',
+  ADD COLUMN IF NOT EXISTS github_url TEXT,
+  ADD COLUMN IF NOT EXISTS live_url TEXT,
+  ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
 
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_user_projects_user_id ON public.user_projects(user_id);
@@ -53,12 +72,18 @@ CREATE TRIGGER set_user_projects_updated_at
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.users (id, email)
-  VALUES (NEW.id, NEW.email);
+  INSERT INTO public.users (id, email, first_name, last_name)
+  VALUES (
+    NEW.id,
+    NEW.email,
+    COALESCE(NEW.raw_user_meta_data->>'first_name', ''),
+    COALESCE(NEW.raw_user_meta_data->>'last_name', '')
+  );
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW
