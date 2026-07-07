@@ -155,7 +155,6 @@ export function ProjectGenerator() {
     }
 
     startTransition(async () => {
-        setError(result.error);
       const fd = new FormData();
       fd.set("career", payload.career);
       fd.set("language", payload.language);
