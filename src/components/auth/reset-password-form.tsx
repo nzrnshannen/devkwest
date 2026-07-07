@@ -2,15 +2,17 @@
 
 import { useActionState } from "react";
 import Link from "next/link";
-import { login, type AuthState } from "@/lib/actions/auth";
+import { updatePassword, type AuthState } from "@/lib/actions/auth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Code2 } from "lucide-react";
 
 const initialState: AuthState = {};
 
-export function LoginForm() {
-  const [state, formAction, pending] = useActionState(login, initialState);
+export function ResetPasswordForm() {
+  const [state, formAction, pending] = useActionState(updatePassword, initialState);
+
+  const fieldError = (field: string) => state.fieldErrors?.[field];
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">
@@ -20,34 +22,31 @@ export function LoginForm() {
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-primary/15 ring-1 ring-primary/30">
               <Code2 className="h-7 w-7 text-primary" />
             </div>
-            <h1 className="text-2xl font-bold">Welcome back</h1>
+            <h1 className="text-2xl font-bold">Choose a new password</h1>
             <p className="mt-2 text-sm text-muted-foreground">
-              Sign in to your DevKwest dashboard
+              Pick a strong password for your DevKwest account.
             </p>
           </div>
 
           <form action={formAction} className="space-y-4">
             <Input
-              label="Email"
-              name="email"
-              type="email"
-              placeholder="you@example.com"
-              required
-            />
-            <Input
-              label="Password"
+              label="New Password"
               name="password"
               type="password"
               placeholder="••••••••"
               required
               minLength={6}
+              error={fieldError("password")}
             />
-
-            <div className="text-right">
-              <Link href="/forgot-password" className="text-sm text-primary hover:underline">
-                Forgot password?
-              </Link>
-            </div>
+            <Input
+              label="Confirm Password"
+              name="confirm_password"
+              type="password"
+              placeholder="••••••••"
+              required
+              minLength={6}
+              error={fieldError("confirm_password")}
+            />
 
             {state.error && (
               <p className="rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-400">
@@ -55,16 +54,19 @@ export function LoginForm() {
               </p>
             )}
 
+            {state.success && (
+              <p className="rounded-lg bg-emerald-500/10 px-4 py-2 text-sm text-emerald-400">
+                {state.success}
+              </p>
+            )}
+
             <Button type="submit" className="w-full" size="lg" isLoading={pending}>
-              Sign In
+              Update password
             </Button>
           </form>
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            Don&apos;t have an account?{" "}
-            <Link href="/register" className="text-primary hover:underline">
-              Register
-            </Link>
+            Return to <Link href="/login" className="text-primary hover:underline">sign in</Link>
           </p>
         </div>
       </div>

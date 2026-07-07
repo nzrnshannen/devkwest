@@ -11,6 +11,7 @@ A gamified project-generator web app built as a multi-user SaaS platform. Roll t
 ## Features
 
 - User registration and login (Supabase Auth)
+- Password reset and account deletion flows
 - Persistent sidebar navigation (Analytics, Generate, Board, Logout)
 - Analytics dashboard with Year / Month / Language filters
 - Smart alert when no pending/in-progress projects exist
@@ -34,7 +35,12 @@ npm install
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
+
+`NEXT_PUBLIC_SITE_URL` is used for Supabase auth redirects, including password reset emails.
+`SUPABASE_SERVICE_ROLE_KEY` is required for deleting auth users from the server.
 
 ### 3. Run the dev server
 
@@ -73,8 +79,9 @@ src/
 
 | Table | Columns |
 |-------|---------|
-| `users` | id, email, created_at |
+| `users` | id, email, first_name, last_name, created_at |
 | `user_projects` | id, user_id, career, language, framework, project_title, time_estimate, status, github_url, live_url, created_at, updated_at |
+| `feedback` | id, email, message, created_at |
 
 Row Level Security ensures users can only access their own data.
 
