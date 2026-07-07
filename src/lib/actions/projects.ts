@@ -47,18 +47,21 @@ export async function createProject(
   const insertData: UserProjectInsert = {
     user_id: user.id,
     ...parsed.data,
+    project_name: parsed.data.project_title,
     status: "pending",
   };
 
   const { error } = await supabase.from("user_projects").insert(insertData);
 
   if (error) {
+    console.error("Failed to create project:", error);
+
     if (error.message.includes("schema cache") || error.message.includes("column")) {
       return {
-        error:
-          "Database schema is out of date. Run supabase/migrations/001_fix_user_projects_columns.sql in your Supabase SQL Editor, then try again.",
+        error: `Database schema mismatch: ${error.message}`,
       };
     }
+
     return { error: error.message };
   }
 
@@ -66,6 +69,27 @@ export async function createProject(
   revalidatePath("/dashboard/board");
   revalidatePath("/dashboard/generate");
   return { success: true };
+}
+
+// Form-compatible server action wrapper for client `useActionState` usage.
+export async function createProjectForm(
+  _prevState: ProjectActionState,
+  formData: FormData
+): Promise<ProjectActionState> {
+  try {
+    const project: GeneratedProject = {
+      career: String(formData.get("career") ?? ""),
+      language: String(formData.get("language") ?? ""),
+      framework: String(formData.get("framework") ?? ""),
+      project_title: String(formData.get("project_title") ?? ""),
+      time_estimate: String(formData.get("time_estimate") ?? ""),
+      ai_assisted: (formData.get("ai_assisted") ?? "false") === "true",
+    } as GeneratedProject;
+
+    return await createProject(project);
+  } catch (err: any) {
+    return { error: err?.message ?? "Unknown error" };
+  }
 }
 
 export async function updateProjectStatus(

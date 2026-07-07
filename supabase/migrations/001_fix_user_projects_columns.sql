@@ -18,10 +18,10 @@ CREATE TABLE IF NOT EXISTS public.user_projects (
   career TEXT NOT NULL DEFAULT '',
   language TEXT NOT NULL DEFAULT '',
   framework TEXT NOT NULL DEFAULT '',
+  project_name TEXT NOT NULL DEFAULT '',
   project_title TEXT NOT NULL DEFAULT '',
   time_estimate TEXT NOT NULL DEFAULT '',
-  status TEXT NOT NULL DEFAULT 'pending'
-    CHECK (status IN ('pending', 'in_progress', 'completed')),
+  status TEXT NOT NULL DEFAULT 'pending',
   github_url TEXT,
   live_url TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS public.user_projects (
 ALTER TABLE public.user_projects ADD COLUMN IF NOT EXISTS career TEXT NOT NULL DEFAULT '';
 ALTER TABLE public.user_projects ADD COLUMN IF NOT EXISTS language TEXT NOT NULL DEFAULT '';
 ALTER TABLE public.user_projects ADD COLUMN IF NOT EXISTS framework TEXT NOT NULL DEFAULT '';
+ALTER TABLE public.user_projects ADD COLUMN IF NOT EXISTS project_name TEXT NOT NULL DEFAULT '';
 ALTER TABLE public.user_projects ADD COLUMN IF NOT EXISTS project_title TEXT NOT NULL DEFAULT '';
 ALTER TABLE public.user_projects ADD COLUMN IF NOT EXISTS time_estimate TEXT NOT NULL DEFAULT '';
 ALTER TABLE public.user_projects ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'pending';
@@ -39,6 +40,13 @@ ALTER TABLE public.user_projects ADD COLUMN IF NOT EXISTS github_url TEXT;
 ALTER TABLE public.user_projects ADD COLUMN IF NOT EXISTS live_url TEXT;
 ALTER TABLE public.user_projects ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
 ALTER TABLE public.user_projects ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+
+ALTER TABLE public.user_projects
+  DROP CONSTRAINT IF EXISTS user_projects_status_check;
+
+ALTER TABLE public.user_projects
+  ADD CONSTRAINT user_projects_status_check
+  CHECK (status IN ('pending', 'in_progress', 'completed'));
 
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_user_projects_user_id ON public.user_projects(user_id);

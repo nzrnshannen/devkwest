@@ -13,16 +13,22 @@ export type Database = {
         Row: {
           id: string;
           email: string;
+          first_name: string;
+          last_name: string;
           created_at: string;
         };
         Insert: {
           id: string;
           email: string;
+          first_name?: string;
+          last_name?: string;
           created_at?: string;
         };
         Update: {
           id?: string;
           email?: string;
+          first_name?: string;
+          last_name?: string;
           created_at?: string;
         };
         Relationships: [];
@@ -34,6 +40,7 @@ export type Database = {
           career: string;
           language: string;
           framework: string;
+          project_name: string;
           project_title: string;
           time_estimate: string;
           status: "pending" | "in_progress" | "completed";
@@ -48,6 +55,7 @@ export type Database = {
           career: string;
           language: string;
           framework: string;
+          project_name?: string;
           project_title: string;
           time_estimate: string;
           status?: "pending" | "in_progress" | "completed";
@@ -62,6 +70,7 @@ export type Database = {
           career?: string;
           language?: string;
           framework?: string;
+          project_name?: string;
           project_title?: string;
           time_estimate?: string;
           status?: "pending" | "in_progress" | "completed";
@@ -79,6 +88,27 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      feedback: {
+        Row: {
+          id: string;
+          email: string | null;
+          message: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          email?: string | null;
+          message: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          email?: string | null;
+          message?: string;
+          created_at?: string;
+        };
+        Relationships: [];
       };
     };
     Views: {
