@@ -17,17 +17,9 @@ export function DeleteAccountForm() {
   const [state, formAction, pending] = useActionState(deleteAccount, initialState);
   const [confirmation, setConfirmation] = useState("");
 
-  const handleSubmit = () => {
-    if (confirmation !== "DELETE") {
-      return;
-    }
-
-    formAction();
-  };
-
   return (
     <form
-      action={handleSubmit}
+      action={formAction}
       className="space-y-4 rounded-xl border border-red-500/20 bg-red-500/5 p-6"
     >
       <div className="space-y-2">

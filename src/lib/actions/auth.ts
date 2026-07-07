@@ -214,8 +214,15 @@ export async function logout() {
   redirect("/login");
 }
 
-export async function deleteAccount(_prevState: { error: string }) {
+export async function deleteAccount(
+  _prevState: { error: string },
+  formData: FormData
+) {
   void _prevState;
+
+  if (formData.get("confirmation") !== "DELETE") {
+    return { error: "Type DELETE to confirm account deletion" };
+  }
 
   const supabase = await createClient();
   const {

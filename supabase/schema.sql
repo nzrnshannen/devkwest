@@ -70,7 +70,11 @@ CREATE TRIGGER set_user_projects_updated_at
 
 -- Auto-create user profile on signup
 CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 BEGIN
   INSERT INTO public.users (id, email, first_name, last_name)
   VALUES (
@@ -81,7 +85,7 @@ BEGIN
   );
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
 
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
@@ -133,4 +137,3 @@ ALTER TABLE public.feedback ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Anyone can insert feedback"
   ON public.feedback FOR INSERT
   WITH CHECK (true);
-
