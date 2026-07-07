@@ -16,6 +16,9 @@ export const metadata: Metadata = {
   title: "DevKwest — Build Projects. Track Progress.",
   description:
     "Start making personal projects and track progress. The productivity tool for developers to build portfolios and stay accountable.",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default function RootLayout({

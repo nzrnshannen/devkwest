@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" role="img" aria-label="DevKwest avatar icon">
+  <defs>
+    <linearGradient id="bg" x1="64" y1="32" x2="448" y2="480" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0f172a" />
+      <stop offset="1" stop-color="#111827" />
+    </linearGradient>
+    <linearGradient id="accent" x1="160" y1="128" x2="352" y2="384" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38bdf8" />
+      <stop offset="1" stop-color="#22c55e" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="128" fill="url(#bg)" />
+  <circle cx="256" cy="216" r="120" fill="url(#accent)" opacity="0.18" />
+  <circle cx="256" cy="204" r="78" fill="#e2e8f0" opacity="0.96" />
+  <path d="M148 400c24-54 76-88 108-88s84 34 108 88" fill="#e2e8f0" opacity="0.96" />
+  <path d="M190 196c0-37 29-66 66-66s66 29 66 66" fill="#0f172a" opacity="0.9" />
+  <circle cx="228" cy="202" r="8" fill="#38bdf8" />
+  <circle cx="284" cy="202" r="8" fill="#38bdf8" />
+  <path d="M222 236c10 12 22 18 34 18s24-6 34-18" stroke="#0f172a" stroke-width="12" stroke-linecap="round" />
+</svg>
