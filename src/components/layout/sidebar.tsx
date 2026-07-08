@@ -31,63 +31,91 @@ interface SidebarProps {
 export function Sidebar({ userEmail }: SidebarProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   const isActive = (href: string) => {
     if (href === "/dashboard") return pathname === "/dashboard";
     return pathname.startsWith(href);
   };
 
+  const sidebarExpanded = isHovered;
+
   const NavContent = () => (
     <>
       <div className="flex items-center gap-3 px-4 py-6 border-b border-border">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/20">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/20 flex-shrink-0">
           <Sparkles className="h-5 w-5 text-primary" />
         </div>
-        <div>
-          <h1 className="font-bold text-lg">Dev<span className="text-primary">Kwest</span></h1>
+        <div className={cn(
+          "transition-opacity duration-300",
+          !sidebarExpanded ? "opacity-0 hidden" : "opacity-100"
+        )}>
+          <h1 className="font-bold text-lg whitespace-nowrap">Dev<span className="text-primary">Kwest</span></h1>
           <p className="text-xs text-muted-foreground truncate max-w-[160px]">
             {userEmail ?? "SaaS Dashboard"}
           </p>
         </div>
       </div>
 
-      <nav className="flex-1 px-3 py-4 space-y-1">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const active = isActive(item.href);
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setMobileOpen(false)}
-              className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
-                active
-                  ? "bg-primary/15 text-primary"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              )}
-            >
-              <Icon className="h-5 w-5" />
-              {item.label}
-              {active && (
-                <motion.div
-                  layoutId="sidebar-active"
-                  className="ml-auto h-2 w-2 rounded-full bg-primary"
-                />
-              )}
-            </Link>
-          );
-        })}
-      </nav>
+      <div className="flex-1 flex flex-col">
+        <nav className="flex-1 px-3 py-4 space-y-1">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const active = isActive(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setMobileOpen(false)}
+                className={cn(
+                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
+                  active
+                    ? "bg-primary/15 text-primary"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                )}
+                title={!sidebarExpanded ? item.label : ""}
+              >
+                <Icon className="h-5 w-5 flex-shrink-0" />
+                <span className={cn(
+                  "transition-opacity duration-300",
+                  !sidebarExpanded ? "opacity-0 hidden" : "opacity-100"
+                )}>
+                  {item.label}
+                </span>
+                {active && (
+                  <motion.div
+                    layoutId="sidebar-active"
+                    className={cn(
+                      "h-2 w-2 rounded-full bg-primary",
+                      !sidebarExpanded ? "hidden" : "ml-auto"
+                    )}
+                  />
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+      </div>
 
       <div className="border-t border-border p-3">
         <form action={logout}>
           <button
             type="submit"
-            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-red-500/10 hover:text-red-400 transition-colors cursor-pointer"
+            className={cn(
+              "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium",
+              "text-muted-foreground hover:bg-red-500/10 hover:text-red-400",
+              "transition-colors cursor-pointer",
+              !sidebarExpanded && "justify-center"
+            )}
+            title={!sidebarExpanded ? "Logout" : ""}
           >
-            <LogOut className="h-5 w-5" />
-            Logout
+            <LogOut className="h-5 w-5 flex-shrink-0" />
+            <span className={cn(
+              "transition-opacity duration-300",
+              !sidebarExpanded ? "opacity-0 hidden" : "opacity-100"
+            )}>
+              Logout
+            </span>
           </button>
         </form>
       </div>
@@ -129,7 +157,15 @@ export function Sidebar({ userEmail }: SidebarProps) {
       </aside>
 
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 bg-sidebar border-r border-border">
+      <aside 
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className={cn(
+          "hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 bg-sidebar border-r border-border",
+          "transition-all duration-300 ease-in-out",
+          sidebarExpanded ? "lg:w-64" : "lg:w-20"
+        )}
+      >
         <NavContent />
       </aside>
     </>
