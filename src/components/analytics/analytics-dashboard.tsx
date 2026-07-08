@@ -107,22 +107,22 @@ export function AnalyticsDashboard({
           color="text-emerald-400"
         />
         <StatCard
-          title="In Progress"
-          value={analytics.totalInProgress}
-          subtitle="Currently building"
-          color="text-blue-400"
-        />
-        <StatCard
-          title="Pending"
-          value={analytics.totalPending}
+          title="To-Do"
+          value={analytics.totalToDo}
           subtitle="Waiting to start"
           color="text-amber-400"
         />
         <StatCard
-          title="Success Rate"
-          value={`${analytics.successRate}%`}
-          subtitle="Completed vs rolled"
-          color="text-purple-400"
+          title="On-Hold"
+          value={analytics.totalOnHold}
+          subtitle="Paused development"
+          color="text-yellow-400"
+        />
+        <StatCard
+          title="In Progress"
+          value={analytics.totalInProgress}
+          subtitle="Currently building"
+          color="text-blue-400"
         />
       </div>
 
@@ -222,7 +222,7 @@ function StatCard({
   color: string;
 }) {
   const shouldGlow = 
-    (title === "In Progress" || title === "Completed Projects" || title === "Pending") && 
+    (title === "In Progress" || title === "Completed Projects" || title === "To-Do" || title === "On-Hold") && 
     value !== 0;
 
   return (
