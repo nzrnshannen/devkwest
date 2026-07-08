@@ -28,7 +28,8 @@ CREATE TABLE IF NOT EXISTS public.user_projects (
   github_url TEXT,
   live_url TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  deleted_at TIMESTAMPTZ
 );
 
 -- Backfill missing columns for existing databases
@@ -43,24 +44,26 @@ ALTER TABLE public.user_projects
   ADD COLUMN IF NOT EXISTS project_name TEXT NOT NULL DEFAULT '',
   ADD COLUMN IF NOT EXISTS project_title TEXT NOT NULL DEFAULT '',
   ADD COLUMN IF NOT EXISTS time_estimate TEXT NOT NULL DEFAULT '',
-  ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'pending',
+  ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'to_do',
   ADD COLUMN IF NOT EXISTS github_url TEXT,
   ADD COLUMN IF NOT EXISTS live_url TEXT,
   ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+  ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
 
 ALTER TABLE public.user_projects
   DROP CONSTRAINT IF EXISTS user_projects_status_check;
 
 ALTER TABLE public.user_projects
   ADD CONSTRAINT user_projects_status_check
-  CHECK (status IN ('pending', 'in_progress', 'completed'));
+  CHECK (status IN ('to_do', 'on_hold', 'in_progress', 'completed'));
 
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_user_projects_user_id ON public.user_projects(user_id);
 CREATE INDEX IF NOT EXISTS idx_user_projects_status ON public.user_projects(status);
 CREATE INDEX IF NOT EXISTS idx_user_projects_created_at ON public.user_projects(created_at);
 CREATE INDEX IF NOT EXISTS idx_user_projects_language ON public.user_projects(language);
+CREATE INDEX IF NOT EXISTS idx_user_projects_deleted_at ON public.user_projects(deleted_at);
 
 -- Auto-update updated_at trigger
 CREATE OR REPLACE FUNCTION public.handle_updated_at()

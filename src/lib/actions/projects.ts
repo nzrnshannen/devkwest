@@ -123,6 +123,7 @@ export async function updateProjectStatus(
       .select("project_title")
       .eq("id", id)
       .eq("user_id", user.id)
+      .is("deleted_at", null)
       .single();
 
     const isSchema = existing?.project_title
@@ -155,7 +156,8 @@ export async function updateProjectStatus(
       .from("user_projects")
       .update(updateData)
       .eq("id", id)
-      .eq("user_id", user.id);
+      .eq("user_id", user.id)
+      .is("deleted_at", null);
 
     if (error) {
       return { error: error.message };
@@ -187,7 +189,8 @@ export async function updateProjectStatus(
     .from("user_projects")
     .update(updateData)
     .eq("id", id)
-    .eq("user_id", user.id);
+    .eq("user_id", user.id)
+    .is("deleted_at", null);
 
   if (error) {
     return { error: error.message };
@@ -214,6 +217,7 @@ export async function getProjects(filters?: {
     .from("user_projects")
     .select("*")
     .eq("user_id", user.id)
+    .is("deleted_at", null)
     .order("created_at", { ascending: false });
 
   if (filters?.year) {
@@ -234,6 +238,57 @@ export async function getProjects(filters?: {
 
   if (error) {
     console.error("Failed to fetch projects:", error.message);
+    return [];
+  }
+
+  return (data ?? []) as UserProject[];
+}
+
+export async function softDeleteProject(
+  id: string
+): Promise<ProjectActionState> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
+
+  const { error } = await supabase
+    .from("user_projects")
+    .update({ deleted_at: new Date().toISOString() })
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .is("deleted_at", null);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/board");
+  return { success: true };
+}
+
+export async function getDeletedProjects(): Promise<UserProject[]> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return [];
+
+  const { data, error } = await supabase
+    .from("user_projects")
+    .select("*")
+    .eq("user_id", user.id)
+    .not("deleted_at", "is", null)
+    .order("deleted_at", { ascending: false });
+
+  if (error) {
+    console.error("Failed to fetch deleted projects:", error.message);
     return [];
   }
 
