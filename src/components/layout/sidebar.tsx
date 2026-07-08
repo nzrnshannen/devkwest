@@ -16,6 +16,7 @@ import {
 import { useState } from "react";
 import { logout } from "@/lib/actions/auth";
 import { motion } from "framer-motion";
+import { useSidebar } from "@/contexts/sidebar-context";
 
 const navItems = [
   { label: "Analytics", href: "/dashboard", icon: BarChart3 },
@@ -31,7 +32,7 @@ interface SidebarProps {
 export function Sidebar({ userEmail }: SidebarProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
+  const { isHovered, setIsHovered } = useSidebar();
 
   const isActive = (href: string) => {
     if (href === "/dashboard") return pathname === "/dashboard";
