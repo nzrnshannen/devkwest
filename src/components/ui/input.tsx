@@ -62,7 +62,7 @@ export function Select({
       <select
         id={selectId}
         className={cn(
-          "w-full rounded-lg border border-border bg-secondary/50 px-4 py-2.5 text-foreground",
+          "w-full rounded-lg border border-border bg-secondary/50 px-4 py-2.5 pr-10 text-foreground",
           "focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors cursor-pointer",
           className
         )}
