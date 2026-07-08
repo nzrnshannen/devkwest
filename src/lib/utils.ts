@@ -13,6 +13,14 @@ export function formatDate(date: string): string {
   }).format(new Date(date));
 }
 
+export function formatDeletedDate(date: string): string {
+  const d = new Date(date);
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  const year = d.getFullYear();
+  return `${month}/${day}/${year}`;
+}
+
 export function getMonthName(month: number): string {
   return new Intl.DateTimeFormat("en-US", { month: "long" }).format(
     new Date(2000, month - 1, 1)
