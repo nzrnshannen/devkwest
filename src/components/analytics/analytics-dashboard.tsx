@@ -221,10 +221,16 @@ function StatCard({
   subtitle: string;
   color: string;
 }) {
+  const shouldGlow = 
+    (title === "In Progress" || title === "Completed Projects" || title === "Pending") && 
+    value !== 0;
+
   return (
     <CardSpotlight>
       <p className="text-sm text-muted-foreground">{title}</p>
-      <p className={`text-3xl font-bold mt-1 ${color}`}>{value}</p>
+      <p className={`text-3xl font-bold mt-1 ${color} ${shouldGlow ? "animate-faint-glow" : ""}`}>
+        {value}
+      </p>
       <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>
     </CardSpotlight>
   );
