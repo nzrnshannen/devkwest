@@ -48,11 +48,11 @@ export function Sidebar({ userEmail }: SidebarProps) {
           <Sparkles className="h-5 w-5 text-primary" />
         </div>
         <div className={cn(
-          "transition-opacity duration-300",
-          !sidebarExpanded ? "opacity-0 hidden" : "opacity-100"
+          "transition-all duration-300 delay-200 ease-in-out",
+          !sidebarExpanded ? "opacity-0 invisible pointer-events-none" : "opacity-100 visible"
         )}>
           <h1 className="font-bold text-lg whitespace-nowrap">Dev<span className="text-primary">Kwest</span></h1>
-          <p className="text-xs text-muted-foreground truncate max-w-[160px]">
+          <p className="text-xs text-muted-foreground truncate max-w-[160px] whitespace-nowrap">
             {userEmail ?? "SaaS Dashboard"}
           </p>
         </div>
@@ -78,8 +78,8 @@ export function Sidebar({ userEmail }: SidebarProps) {
               >
                 <Icon className="h-5 w-5 flex-shrink-0" />
                 <span className={cn(
-                  "transition-opacity duration-300",
-                  !sidebarExpanded ? "opacity-0 hidden" : "opacity-100"
+                  "transition-all duration-300 delay-200 ease-in-out whitespace-nowrap",
+                  !sidebarExpanded ? "opacity-0 invisible pointer-events-none" : "opacity-100 visible"
                 )}>
                   {item.label}
                 </span>
@@ -87,8 +87,8 @@ export function Sidebar({ userEmail }: SidebarProps) {
                   <motion.div
                     layoutId="sidebar-active"
                     className={cn(
-                      "h-2 w-2 rounded-full bg-primary",
-                      !sidebarExpanded ? "hidden" : "ml-auto"
+                      "h-2 w-2 rounded-full bg-primary transition-all duration-300 delay-200 ease-in-out",
+                      !sidebarExpanded ? "opacity-0 invisible w-0" : "opacity-100 visible ml-auto"
                     )}
                   />
                 )}
@@ -112,8 +112,8 @@ export function Sidebar({ userEmail }: SidebarProps) {
           >
             <LogOut className="h-5 w-5 flex-shrink-0" />
             <span className={cn(
-              "transition-opacity duration-300",
-              !sidebarExpanded ? "opacity-0 hidden" : "opacity-100"
+              "transition-all duration-300 delay-200 ease-in-out whitespace-nowrap",
+              !sidebarExpanded ? "opacity-0 invisible pointer-events-none" : "opacity-100 visible"
             )}>
               Logout
             </span>
