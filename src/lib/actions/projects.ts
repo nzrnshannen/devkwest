@@ -17,7 +17,7 @@ const createProjectSchema = z.object({
 
 const updateStatusSchema = z.object({
   id: z.string().uuid(),
-  status: z.enum(["pending", "in_progress", "completed"]),
+  status: z.enum(["to_do", "on_hold", "in_progress", "completed"]),
   github_url: z.string().url().optional().or(z.literal("")),
   live_url: z.string().url().optional().or(z.literal("")),
 });
@@ -48,7 +48,7 @@ export async function createProject(
     user_id: user.id,
     ...parsed.data,
     project_name: parsed.data.project_title,
-    status: "pending",
+    status: "to_do",
   };
 
   const { error } = await supabase.from("user_projects").insert(insertData);
@@ -248,7 +248,8 @@ export async function getAnalytics(filters?: {
   const projects = await getProjects(filters);
 
   const completed = projects.filter((p) => p.status === "completed");
-  const pending = projects.filter((p) => p.status === "pending");
+  const toDo = projects.filter((p) => p.status === "to_do");
+  const onHold = projects.filter((p) => p.status === "on_hold");
   const inProgress = projects.filter((p) => p.status === "in_progress");
 
   const languageMap = new Map<string, number>();
@@ -266,10 +267,11 @@ export async function getAnalytics(filters?: {
 
   return {
     totalCompleted: completed.length,
-    totalPending: pending.length,
+    totalToDo: toDo.length,
+    totalOnHold: onHold.length,
     totalInProgress: inProgress.length,
     languageBreakdown,
     successRate,
-    hasActiveProjects: pending.length > 0 || inProgress.length > 0,
+    hasActiveProjects: toDo.length > 0 || onHold.length > 0 || inProgress.length > 0,
   };
 }

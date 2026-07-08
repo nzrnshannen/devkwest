@@ -43,7 +43,7 @@ export type Database = {
           project_name: string;
           project_title: string;
           time_estimate: string;
-          status: "pending" | "in_progress" | "completed";
+          status: "to_do" | "on_hold" | "in_progress" | "completed";
           github_url: string | null;
           live_url: string | null;
           created_at: string;
@@ -58,7 +58,7 @@ export type Database = {
           project_name?: string;
           project_title: string;
           time_estimate: string;
-          status?: "pending" | "in_progress" | "completed";
+          status?: "to_do" | "on_hold" | "in_progress" | "completed";
           github_url?: string | null;
           live_url?: string | null;
           created_at?: string;
@@ -73,7 +73,7 @@ export type Database = {
           project_name?: string;
           project_title?: string;
           time_estimate?: string;
-          status?: "pending" | "in_progress" | "completed";
+          status?: "to_do" | "on_hold" | "in_progress" | "completed";
           github_url?: string | null;
           live_url?: string | null;
           created_at?: string;

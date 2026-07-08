@@ -23,7 +23,8 @@ import {
 import { motion } from "framer-motion";
 
 const COLUMNS: { id: ProjectStatus; title: string; color: string }[] = [
-  { id: "pending", title: "Pending", color: "border-amber-500/30" },
+  { id: "to_do", title: "To-Do", color: "border-amber-500/30" },
+  { id: "on_hold", title: "On-Hold", color: "border-yellow-500/30" },
   { id: "in_progress", title: "In Progress", color: "border-blue-500/30" },
   { id: "completed", title: "Completed", color: "border-emerald-500/30" },
 ];

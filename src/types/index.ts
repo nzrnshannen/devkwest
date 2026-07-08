@@ -1,4 +1,4 @@
-export type ProjectStatus = "pending" | "in_progress" | "completed";
+export type ProjectStatus = "to_do" | "on_hold" | "in_progress" | "completed";
 
 export interface User {
   id: string;
@@ -41,7 +41,8 @@ export interface AnalyticsFilters {
 
 export interface AnalyticsData {
   totalCompleted: number;
-  totalPending: number;
+  totalToDo: number;
+  totalOnHold: number;
   totalInProgress: number;
   languageBreakdown: { language: string; count: number }[];
   successRate: number;
