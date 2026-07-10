@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
 import { Code2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -23,33 +22,21 @@ export function Header() {
           </span>
         </Link>
 
-        <nav className="flex items-center gap-3">
+        <nav className="flex items-center gap-2 sm:gap-3">
           {isAuthPage && (
             <Link
               href="/"
-              className="hidden sm:inline text-sm text-muted-foreground hover:text-foreground transition-colors mr-2"
+              className="hidden sm:inline text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Home
             </Link>
           )}
-          <Link href="/login">
+          <Link href="/login" aria-label="Log in to your account">
             <Button
               variant={pathname === "/login" ? "primary" : "ghost"}
               size="sm"
             >
-              Login
-            </Button>
-          </Link>
-          <Link href="/register">
-            <Button
-              variant={pathname === "/register" ? "primary" : "secondary"}
-              size="sm"
-              className={cn(
-                pathname !== "/register" &&
-                  "border border-primary/30 hover:border-primary/60 hover:bg-primary/10"
-              )}
-            >
-              Register
+              Log In
             </Button>
           </Link>
         </nav>
