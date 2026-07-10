@@ -2,10 +2,12 @@
 
 import { useActionState, useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
 import { register, type AuthState } from "@/lib/actions/auth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Code2 } from "lucide-react";
+import { CheckCircle2, Code2 } from "lucide-react";
 
 const initialState: AuthState = {};
 
@@ -28,9 +30,11 @@ const emptyForm: FormValues = {
 };
 
 export function RegisterForm() {
+  const router = useRouter();
   const [state, formAction, pending] = useActionState(register, initialState);
   const [clientErrors, setClientErrors] = useState<Record<string, string>>({});
   const [formValues, setFormValues] = useState<FormValues>(emptyForm);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const updateField = (field: keyof FormValues, value: string) => {
     setFormValues((prev) => ({ ...prev, [field]: value }));
@@ -61,6 +65,17 @@ export function RegisterForm() {
       clearPasswordFields();
     }
   }, [state.fieldErrors, state.error]);
+
+  useEffect(() => {
+    if (state.success) {
+      setShowSuccessModal(true);
+    }
+  }, [state.success]);
+
+  const handleSuccessOk = () => {
+    setShowSuccessModal(false);
+    router.push("/login");
+  };
 
   const handleSubmit = (formData: FormData) => {
     const errors: Record<string, string> = {};
@@ -178,12 +193,6 @@ export function RegisterForm() {
               </p>
             )}
 
-            {state.success && (
-              <p className="rounded-lg bg-emerald-500/10 px-4 py-2 text-sm text-emerald-400">
-                {state.success}
-              </p>
-            )}
-
             <Button type="submit" className="w-full" size="lg" isLoading={pending}>
               Create Account
             </Button>
@@ -197,6 +206,47 @@ export function RegisterForm() {
           </p>
         </div>
       </div>
+
+      <AnimatePresence>
+        {showSuccessModal && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: "spring", stiffness: 300, damping: 24 }}
+              className="fixed left-1/2 top-1/2 z-50 w-full max-w-sm -translate-x-1/2 -translate-y-1/2 px-4"
+            >
+              <div className="rounded-xl border border-emerald-500/30 bg-card p-8 text-center shadow-2xl box-glow">
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 18, delay: 0.1 }}
+                  className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/15 ring-2 ring-emerald-500/40"
+                >
+                  <CheckCircle2 className="h-9 w-9 text-emerald-400" />
+                </motion.div>
+                <h2 className="text-xl font-bold text-foreground">
+                  Successfully registered account!
+                </h2>
+                <Button
+                  className="mt-8 w-full"
+                  size="lg"
+                  onClick={handleSuccessOk}
+                >
+                  OK
+                </Button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
