@@ -87,8 +87,8 @@ export async function createProjectForm(
     } as GeneratedProject;
 
     return await createProject(project);
-  } catch (err: any) {
-    return { error: err?.message ?? "Unknown error" };
+  } catch (err: unknown) {
+    return { error: err instanceof Error ? err.message : "Unknown error" };
   }
 }
 
@@ -293,6 +293,34 @@ export async function getDeletedProjects(): Promise<UserProject[]> {
   }
 
   return (data ?? []) as UserProject[];
+}
+
+export async function restoreProject(
+  id: string
+): Promise<ProjectActionState> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
+
+  const { error } = await supabase
+    .from("user_projects")
+    .update({ deleted_at: null })
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .not("deleted_at", "is", null);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/board");
+  return { success: true };
 }
 
 export async function getAnalytics(filters?: {

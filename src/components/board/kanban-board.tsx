@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import type { UserProject, ProjectStatus } from "@/types";
 import {
   getDeletedProjects,
+  restoreProject,
   softDeleteProject,
   updateProjectStatus,
 } from "@/lib/actions/projects";
@@ -23,7 +24,9 @@ import {
   ExternalLink,
   Github,
   GripVertical,
+  History,
   Layers,
+  RotateCcw,
   Trash2,
 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -54,7 +57,8 @@ export function KanbanBoard({ projects: initialProjects }: KanbanBoardProps) {
     useState<UserProject | null>(null);
   const [recentlyDeletedOpen, setRecentlyDeletedOpen] = useState(false);
   const [deletedProjects, setDeletedProjects] = useState<UserProject[]>([]);
-  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
   const [completionModal, setCompletionModal] = useState<{
     projectId: string;
     projectTitle: string;
@@ -191,7 +195,8 @@ export function KanbanBoard({ projects: initialProjects }: KanbanBoardProps) {
         return;
       }
 
-      setShowSuccessToast(true);
+      setToastMessage("Successfully deleted project");
+      setShowToast(true);
       if (recentlyDeletedOpen) {
         const deleted = await getDeletedProjects();
         setDeletedProjects(deleted);
@@ -199,19 +204,52 @@ export function KanbanBoard({ projects: initialProjects }: KanbanBoardProps) {
     });
   };
 
+  const handleRestoreProject = (project: UserProject) => {
+    setDeletedProjects((prev) => prev.filter((p) => p.id !== project.id));
+    setProjects((prev) => [
+      { ...project, deleted_at: null },
+      ...prev,
+    ]);
+
+    startTransition(async () => {
+      const result = await restoreProject(project.id);
+      if (result.error) {
+        setProjects(initialProjects);
+        const deleted = await getDeletedProjects();
+        setDeletedProjects(deleted);
+        setModalError(result.error);
+        return;
+      }
+
+      setToastMessage("Successfully restored project");
+      setShowToast(true);
+    });
+  };
+
   useEffect(() => {
-    if (!showSuccessToast) return;
-    const timer = setTimeout(() => setShowSuccessToast(false), 4000);
+    if (!showToast) return;
+    const timer = setTimeout(() => setShowToast(false), 4000);
     return () => clearTimeout(timer);
-  }, [showSuccessToast]);
+  }, [showToast]);
 
   return (
     <div className="relative pb-16">
-      <div>
-        <h1 className="text-2xl font-bold">Project Board</h1>
-        <p className="text-muted-foreground mt-1">
-          Drag cards between columns or use the action buttons to update status
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">Project Board</h1>
+          <p className="text-muted-foreground mt-1">
+            Drag cards between columns or use the action buttons to update status
+          </p>
+        </div>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={handleOpenRecentlyDeleted}
+          className="flex items-center gap-1.5 self-start sm:self-auto shrink-0"
+        >
+          <History className="h-4 w-4" />
+          Recently Deleted
+        </Button>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3 mt-6">
@@ -255,13 +293,6 @@ export function KanbanBoard({ projects: initialProjects }: KanbanBoardProps) {
         ))}
       </div>
 
-      <button
-        type="button"
-        onClick={handleOpenRecentlyDeleted}
-        className="fixed bottom-6 left-6 lg:left-24 z-40 rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors cursor-pointer shadow-lg"
-      >
-        Recently Deleted
-      </button>
 
       <Modal
         isOpen={!!detailProject}
@@ -327,12 +358,29 @@ export function KanbanBoard({ projects: initialProjects }: KanbanBoardProps) {
             {deletedProjects.map((project) => (
               <li
                 key={project.id}
-                className="rounded-lg border border-border bg-muted/30 px-4 py-3 text-sm"
+                className="flex items-center justify-between rounded-lg border border-border bg-muted/30 px-4 py-3 text-sm gap-4"
               >
-                {project.project_title} |{" "}
-                {project.deleted_at
-                  ? formatDeletedDate(project.deleted_at)
-                  : "—"}
+                <div className="min-w-0 flex-1">
+                  <span className="font-medium text-foreground block truncate">
+                    {project.project_title}
+                  </span>
+                  <span className="text-muted-foreground text-xs block mt-0.5">
+                    {project.language} • {project.framework}
+                  </span>
+                  <p className="text-[11px] text-muted-foreground/80 mt-1">
+                    Deleted {project.deleted_at ? formatDeletedDate(project.deleted_at) : "—"}
+                  </p>
+                </div>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => handleRestoreProject(project)}
+                  disabled={isPending}
+                  className="flex items-center gap-1.5 shrink-0"
+                >
+                  <RotateCcw className="h-3.5 w-3.5" />
+                  Restore
+                </Button>
               </li>
             ))}
           </ul>
@@ -421,9 +469,9 @@ export function KanbanBoard({ projects: initialProjects }: KanbanBoardProps) {
       </Modal>
 
       <Toast
-        message="Successfully deleted project"
-        isVisible={showSuccessToast}
-        onClose={() => setShowSuccessToast(false)}
+        message={toastMessage}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
       />
     </div>
   );
