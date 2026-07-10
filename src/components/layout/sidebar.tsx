@@ -43,13 +43,19 @@ export function Sidebar({ userEmail }: SidebarProps) {
 
   const NavContent = () => (
     <>
-      <div className="flex items-center gap-3 px-4 py-6 border-b border-border">
+      <div className={cn(
+        "flex items-center py-6 border-b border-border transition-all duration-300 ease-in-out lg:px-5 px-4",
+        sidebarExpanded ? "gap-3" : "lg:gap-0 gap-3"
+      )}>
         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/20 flex-shrink-0">
           <Sparkles className="h-5 w-5 text-primary" />
         </div>
         <div className={cn(
-          "transition-all duration-300 delay-200 ease-in-out",
-          !sidebarExpanded ? "opacity-0 invisible pointer-events-none" : "opacity-100 visible"
+          "transition-all duration-300",
+          sidebarExpanded
+            ? "opacity-100 translate-x-0 lg:delay-150 lg:duration-200"
+            : "lg:opacity-0 lg:-translate-x-4 lg:pointer-events-none lg:duration-100 lg:w-0 lg:h-0 lg:overflow-hidden",
+          "opacity-100 translate-x-0"
         )}>
           <h1 className="font-bold text-lg whitespace-nowrap">Dev<span className="text-primary">Kwest</span></h1>
           <p className="text-xs text-muted-foreground truncate max-w-[160px] whitespace-nowrap">
@@ -69,7 +75,10 @@ export function Sidebar({ userEmail }: SidebarProps) {
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
+                  "flex items-center rounded-lg text-sm font-medium transition-all",
+                  sidebarExpanded
+                    ? "gap-3 px-3 py-2.5 lg:pl-[18px] lg:pr-3"
+                    : "lg:gap-0 gap-3 px-3 py-2.5 lg:px-[18px]",
                   active
                     ? "bg-primary/15 text-primary"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -78,8 +87,11 @@ export function Sidebar({ userEmail }: SidebarProps) {
               >
                 <Icon className="h-5 w-5 flex-shrink-0" />
                 <span className={cn(
-                  "transition-all duration-300 delay-200 ease-in-out whitespace-nowrap",
-                  !sidebarExpanded ? "opacity-0 invisible pointer-events-none" : "opacity-100 visible"
+                  "whitespace-nowrap transition-all duration-300",
+                  sidebarExpanded
+                    ? "opacity-100 translate-x-0 lg:delay-150 lg:duration-200"
+                    : "lg:opacity-0 lg:-translate-x-4 lg:pointer-events-none lg:duration-100 lg:w-0 lg:h-0 lg:overflow-hidden",
+                  "opacity-100 translate-x-0"
                 )}>
                   {item.label}
                 </span>
@@ -87,8 +99,10 @@ export function Sidebar({ userEmail }: SidebarProps) {
                   <motion.div
                     layoutId="sidebar-active"
                     className={cn(
-                      "h-2 w-2 rounded-full bg-primary transition-all duration-300 delay-200 ease-in-out",
-                      !sidebarExpanded ? "opacity-0 invisible w-0" : "opacity-100 visible ml-auto"
+                      "h-2 w-2 rounded-full bg-primary transition-all",
+                      sidebarExpanded
+                        ? "opacity-100 scale-100 lg:delay-150 lg:duration-200 ml-auto"
+                        : "lg:opacity-0 lg:scale-0 lg:pointer-events-none lg:duration-100 lg:w-0 ml-auto"
                     )}
                   />
                 )}
@@ -103,17 +117,22 @@ export function Sidebar({ userEmail }: SidebarProps) {
           <button
             type="submit"
             className={cn(
-              "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium",
+              "flex w-full items-center rounded-lg text-sm font-medium",
               "text-muted-foreground hover:bg-red-500/10 hover:text-red-400",
               "transition-colors cursor-pointer",
-              !sidebarExpanded && "justify-center"
+              sidebarExpanded
+                ? "gap-3 px-3 py-2.5 lg:pl-[18px] lg:pr-3"
+                : "lg:gap-0 gap-3 px-3 py-2.5 lg:px-[18px]"
             )}
             title={!sidebarExpanded ? "Logout" : ""}
           >
             <LogOut className="h-5 w-5 flex-shrink-0" />
             <span className={cn(
-              "transition-all duration-300 delay-200 ease-in-out whitespace-nowrap",
-              !sidebarExpanded ? "opacity-0 invisible pointer-events-none" : "opacity-100 visible"
+              "whitespace-nowrap transition-all duration-300",
+              sidebarExpanded
+                ? "opacity-100 translate-x-0 lg:delay-150 lg:duration-200"
+                : "lg:opacity-0 lg:-translate-x-4 lg:pointer-events-none lg:duration-100 lg:w-0 lg:h-0 lg:overflow-hidden",
+              "opacity-100 translate-x-0"
             )}>
               Logout
             </span>
@@ -162,7 +181,7 @@ export function Sidebar({ userEmail }: SidebarProps) {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         className={cn(
-          "hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 bg-sidebar border-r border-border",
+          "hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 bg-sidebar border-r border-border overflow-x-hidden",
           "transition-all duration-300 ease-in-out",
           sidebarExpanded ? "lg:w-64" : "lg:w-20"
         )}
