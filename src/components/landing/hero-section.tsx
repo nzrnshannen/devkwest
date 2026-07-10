@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import {
   ArrowRight,
   BarChart3,
+  ChevronDown,
   Kanban,
   Sparkles,
   Terminal,
@@ -32,11 +33,25 @@ const features = [
   },
 ];
 
-export function HeroSection() {
+export function HeroSection({ rippleFilterId }: { rippleFilterId?: string }) {
+  const scrollToFeatures = () => {
+    document.getElementById("features")?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const rippleStyle = rippleFilterId
+    ? { filter: `url(#${rippleFilterId})` }
+    : undefined;
+
   return (
     <section className="relative overflow-hidden pt-32 pb-20 px-6">
-      <div className="absolute inset-0 bg-dot-white opacity-40" />
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 h-[500px] w-[700px] rounded-full bg-primary/5 blur-[120px] animate-pulse-glow" />
+      <div
+        className="pointer-events-none absolute inset-0 bg-dot-white opacity-40"
+        style={rippleStyle}
+      />
+      <div
+        className="pointer-events-none absolute top-1/4 left-1/2 h-[500px] w-[700px] -translate-x-1/2 rounded-full bg-primary/5 blur-[120px] animate-pulse-glow"
+        style={rippleStyle}
+      />
 
       <div className="relative mx-auto max-w-6xl">
         <motion.div
@@ -63,27 +78,34 @@ export function HeroSection() {
             stay accountable, and turn side projects into career milestones.
           </p>
 
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
             <Link href="/register">
-              <Button size="lg" className="min-w-[180px] box-glow">
+              <Button size="lg" className="min-w-[200px] box-glow">
                 Get Started Free
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
-            <Link href="/login">
-              <Button variant="secondary" size="lg" className="min-w-[180px]">
-                Sign In
-              </Button>
-            </Link>
+            <Button
+              type="button"
+              variant="secondary"
+              size="lg"
+              className="min-w-[200px]"
+              aria-label="Explore features section"
+              onClick={scrollToFeatures}
+            >
+              Explore Features
+              <ChevronDown className="h-4 w-4" />
+            </Button>
           </div>
         </motion.div>
 
         {/* Feature cards */}
         <motion.div
+          id="features"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="mt-24 grid gap-6 sm:grid-cols-3"
+          className="mt-24 scroll-mt-28 grid gap-6 sm:grid-cols-3"
         >
           {features.map((feature, i) => {
             const Icon = feature.icon;
