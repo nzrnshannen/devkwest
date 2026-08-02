@@ -44,11 +44,7 @@ export function HeroSection({ rippleFilterId }: { rippleFilterId?: string }) {
 
   return (
     <section className="relative overflow-hidden pt-32 pb-20 px-6">
-      <div
-        className="pointer-events-none absolute inset-0 bg-dot-white opacity-40"
-        style={rippleStyle}
-      />
-      {/* Ripple effect removed per user request */}
+      {/* Background grids and ripples removed per user request */}
 
       <div className="relative mx-auto max-w-6xl">
         <motion.div
