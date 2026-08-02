@@ -6,6 +6,7 @@ import { HeroSection } from "@/components/landing/hero-section";
 import { FeedbackForm } from "@/components/landing/feedback-form";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
+import { Construction } from "lucide-react";
 
 const RIPPLE_FILTER_ID = "landing-water-ripple";
 
@@ -65,20 +66,24 @@ export function LandingPageContent() {
       <Modal 
         isOpen={isDevModalOpen} 
         onClose={() => setIsDevModalOpen(false)} 
-        title="Development in Progress 🚧"
       >
-        <div className="space-y-4">
-          <p className="text-sm text-muted-foreground">
-            Welcome to DevKwest! Please note that this project is currently in active development.
-          </p>
-          <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
-            <li>Some functionalities may not be working yet.</li>
-            <li>Expect occasional bugs or UI changes.</li>
-            <li>We appreciate your patience as we build!</li>
-          </ul>
-          <div className="mt-6 flex justify-end">
-            <Button onClick={() => setIsDevModalOpen(false)}>I Understand</Button>
+        <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-transparent via-primary to-transparent opacity-80" />
+        <div className="flex flex-col items-center text-center pt-2">
+          <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full border border-primary/20 bg-primary/5">
+            <Construction className="h-6 w-6 text-primary" />
           </div>
+          <h2 className="mb-4 text-2xl font-bold tracking-tight text-foreground">
+            System Under Active<br />Development
+          </h2>
+          <p className="mb-10 text-sm leading-relaxed text-muted-foreground">
+            Welcome to DevKwest! Please note that our platform is currently in active development. You may encounter incomplete features, testing data, or occasional instability as we prepare for our official release.
+          </p>
+          <Button 
+            onClick={() => setIsDevModalOpen(false)}
+            className="w-full rounded-xl bg-white py-6 text-base font-semibold text-black hover:bg-white/90"
+          >
+            I Understand
+          </Button>
         </div>
       </Modal>
     </main>
