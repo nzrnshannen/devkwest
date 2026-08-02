@@ -1,12 +1,21 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { MouseRippleEffect } from "@/components/landing/mouse-ripple-effect";
 import { HeroSection } from "@/components/landing/hero-section";
 import { FeedbackForm } from "@/components/landing/feedback-form";
+import { Modal } from "@/components/ui/modal";
+import { Button } from "@/components/ui/button";
 
 const RIPPLE_FILTER_ID = "landing-water-ripple";
 
 export function LandingPageContent() {
+  const [isDevModalOpen, setIsDevModalOpen] = useState(false);
+
+  useEffect(() => {
+    setIsDevModalOpen(true);
+  }, []);
+
   return (
     <main className="relative min-h-screen bg-background">
       <svg aria-hidden="true" className="absolute h-0 w-0" xmlns="http://www.w3.org/2000/svg">
@@ -52,6 +61,26 @@ export function LandingPageContent() {
           </p>
         </footer>
       </div>
+
+      <Modal 
+        isOpen={isDevModalOpen} 
+        onClose={() => setIsDevModalOpen(false)} 
+        title="Development in Progress 🚧"
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            Welcome to DevKwest! Please note that this project is currently in active development.
+          </p>
+          <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
+            <li>Some functionalities may not be working yet.</li>
+            <li>Expect occasional bugs or UI changes.</li>
+            <li>We appreciate your patience as we build!</li>
+          </ul>
+          <div className="mt-6 flex justify-end">
+            <Button onClick={() => setIsDevModalOpen(false)}>I Understand</Button>
+          </div>
+        </div>
+      </Modal>
     </main>
   );
 }
