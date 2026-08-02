@@ -48,10 +48,7 @@ export function HeroSection({ rippleFilterId }: { rippleFilterId?: string }) {
         className="pointer-events-none absolute inset-0 bg-dot-white opacity-40"
         style={rippleStyle}
       />
-      <div
-        className="pointer-events-none absolute top-1/4 left-1/2 h-[500px] w-[700px] -translate-x-1/2 rounded-full bg-primary/5 blur-[120px] animate-pulse-glow"
-        style={rippleStyle}
-      />
+      {/* Ripple effect removed per user request */}
 
       <div className="relative mx-auto max-w-6xl">
         <motion.div
